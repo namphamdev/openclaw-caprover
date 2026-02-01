@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OpenClaw Setup</title>
+  <link rel="stylesheet" href="/setup/static/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>OpenClaw Setup</h1>
+      <p class="subtitle">Production-ready AI assistant</p>
+    </header>
+
+    <div id="status-banner" class="status-banner hidden">
+      <span id="status-text"></span>
+    </div>
+
+    <main>
+      <!-- Status Section -->
+      <section id="status-section" class="section">
+        <h2>System Status</h2>
+        <div class="status-grid">
+          <div class="status-item">
+            <span class="status-label">Configuration</span>
+            <span id="config-status" class="status-value">Checking...</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Gateway</span>
+            <span id="gateway-status" class="status-value">Checking...</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Provider Configuration -->
+      <section id="provider-section" class="section">
+        <h2>AI Provider</h2>
+        <p class="section-desc">Configure at least one AI provider to use OpenClaw.</p>
+
+        <div class="form-group">
+          <label for="provider-select">Provider</label>
+          <select id="provider-select">
+            <option value="anthropic">Anthropic (Claude)</option>
+            <option value="openai">OpenAI (GPT)</option>
+            <option value="google">Google (Gemini)</option>
+            <option value="openrouter">OpenRouter</option>
+            <option value="ollama">Ollama (Local)</option>
+            <option value="custom">Custom OpenAI-compatible</option>
+          </select>
+        </div>
+
+        <div id="provider-form">
+          <!-- Dynamic provider fields -->
+        </div>
+
+        <button id="save-provider-btn" class="btn btn-primary">Save Provider</button>
+      </section>
+
+      <!-- Channel Configuration -->
+      <section id="channel-section" class="section">
+        <h2>Chat Channels</h2>
+        <p class="section-desc">Optional: Connect messaging platforms to chat with OpenClaw.</p>
+
+        <div class="accordion">
+          <div class="accordion-item">
+            <button class="accordion-header" data-channel="telegram">
+              Telegram
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content hidden">
+              <div class="form-group">
+                <label for="telegram-token">Bot Token</label>
+                <input type="password" id="telegram-token" placeholder="123456:ABC-DEF...">
+                <small>Get from @BotFather on Telegram</small>
+              </div>
+              <div class="form-group">
+                <label for="telegram-allowed">Allowed Users (comma-separated)</label>
+                <input type="text" id="telegram-allowed" placeholder="username1, username2">
+              </div>
+              <button class="btn btn-secondary save-channel-btn" data-channel="telegram">Save Telegram</button>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header" data-channel="discord">
+              Discord
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content hidden">
+              <div class="form-group">
+                <label for="discord-token">Bot Token</label>
+                <input type="password" id="discord-token" placeholder="Bot token from Discord Developer Portal">
+              </div>
+              <div class="form-group">
+                <label for="discord-allowed">Allowed User IDs (comma-separated)</label>
+                <input type="text" id="discord-allowed" placeholder="123456789, 987654321">
+              </div>
+              <button class="btn btn-secondary save-channel-btn" data-channel="discord">Save Discord</button>
+            </div>
+          </div>
+
+          <div class="accordion-item">
+            <button class="accordion-header" data-channel="slack">
+              Slack
+              <span class="accordion-icon">+</span>
+            </button>
+            <div class="accordion-content hidden">
+              <div class="form-group">
+                <label for="slack-token">Bot Token</label>
+                <input type="password" id="slack-token" placeholder="xoxb-...">
+              </div>
+              <div class="form-group">
+                <label for="slack-signing">Signing Secret</label>
+                <input type="password" id="slack-signing" placeholder="Signing secret from Slack App settings">
+              </div>
+              <button class="btn btn-secondary save-channel-btn" data-channel="slack">Save Slack</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pairing Approval -->
+      <section id="pairing-section" class="section">
+        <h2>Device Pairing</h2>
+        <p class="section-desc">Approve pairing requests from CLI or mobile apps.</p>
+
+        <div id="pending-pairings">
+          <p class="empty-state">No pending pairing requests</p>
+        </div>
+
+        <div class="form-group">
+          <label for="pairing-code">Manual Approval Code</label>
+          <div class="input-group">
+            <input type="text" id="pairing-code" placeholder="Enter 6-digit code">
+            <button id="approve-pairing-btn" class="btn btn-secondary">Approve</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Access Info -->
+      <section id="access-section" class="section">
+        <h2>Access Information</h2>
+
+        <div class="info-box">
+          <h3>Gateway Token</h3>
+          <p class="token-display">
+            <code id="gateway-token">Loading...</code>
+            <button id="copy-token-btn" class="btn btn-small">Copy</button>
+          </p>
+          <small>Use this token for CLI access and API authentication.</small>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <section id="actions-section" class="section">
+        <h2>Actions</h2>
+        <div class="action-buttons">
+          <button id="restart-btn" class="btn btn-secondary">Restart Gateway</button>
+          <a href="/setup/export" class="btn btn-secondary">Download Backup</a>
+          <button id="reset-btn" class="btn btn-danger">Reset Configuration</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        <a href="/" class="btn btn-primary">Open Control UI</a>
+      </p>
+      <p>
+        <a href="https://docs.openclaw.ai" target="_blank">Documentation</a>
+      </p>
+    </footer>
+  </div>
+
+  <script src="/setup/static/setup-app.js"></script>
+</body>
+</html>

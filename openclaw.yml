@@ -1,0 +1,71 @@
+captainVersion: 4
+services:
+    $$cap_appname:
+        restart: always
+        volumes:
+            - $$cap_appname-data:/home/node/.openclaw
+        environment:
+            PORT: '18789'
+            INTERNAL_GATEWAY_PORT: '18790'
+            SETUP_PASSWORD: $$cap_setup_password
+            OPENCLAW_GATEWAY_TOKEN: $$cap_gateway_token
+            OPENCLAW_STATE_DIR: /home/node/.openclaw
+            OPENCLAW_WORKSPACE_DIR: /home/node/.openclaw/workspace
+            NODE_ENV: production
+            HOME: /home/node
+        caproverExtra:
+            containerHttpPort: '18789'
+            websocketSupport: 'true'
+            dockerfileLines:
+                - FROM node:22-bookworm-slim AS builder
+                - WORKDIR /app
+                - RUN apt-get update && apt-get install -y --no-install-recommends git ca-certificates && rm -rf /var/lib/apt/lists/*
+                - RUN git clone --depth 1 https://github.com/Achxy/openclaw-caprover.git .
+                - RUN npm ci --omit=dev --ignore-scripts
+                - FROM ghcr.io/openclaw/openclaw:latest
+                - USER root
+                - RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - && apt-get install -y --no-install-recommends nodejs && apt-get clean && rm -rf /var/lib/apt/lists/*
+                - WORKDIR /wrapper
+                - COPY --from=builder /app/node_modules ./node_modules
+                - COPY --from=builder /app/src ./src
+                - COPY --from=builder /app/package.json ./
+                - RUN mkdir -p /home/node/.openclaw /home/node/.openclaw/workspace && chown -R node:node /home/node/.openclaw /wrapper
+                - ENV PORT=18789 INTERNAL_GATEWAY_PORT=18790 OPENCLAW_STATE_DIR=/home/node/.openclaw OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace NODE_ENV=production HOME=/home/node
+                - EXPOSE 18789
+                - HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 CMD curl -sf http://localhost:18789/health || exit 1
+                - USER node
+                - CMD ["node", "/wrapper/src/server.js"]
+
+caproverOneClickApp:
+    variables:
+        - id: $$cap_setup_password
+          label: Setup Password
+          description: Password for /setup endpoint
+          defaultValue: $$cap_gen_random_hex(32)
+          validRegex: /^.{8,}$/
+
+        - id: $$cap_gateway_token
+          label: Gateway Token
+          description: Auth token for API/CLI access
+          defaultValue: $$cap_gen_random_hex(64)
+          validRegex: /^.{32,}$/
+
+    instructions:
+        start: |-
+            Save both credentials before deploying. They cannot be recovered.
+
+        end: |-
+            1. Enable HTTPS in CapRover (HTTP Settings tab)
+            2. Open https://$$cap_appname.$$cap_root_domain/setup
+            3. Enter Setup Password when prompted
+            4. Configure an AI provider
+            5. Access https://$$cap_appname.$$cap_root_domain
+
+            CLI access: wss://$$cap_appname.$$cap_root_domain with Gateway Token
+
+            Backup: https://$$cap_appname.$$cap_root_domain/setup/export
+
+    displayName: OpenClaw
+    isOfficial: false
+    description: CapRover one-click app for OpenClaw
+    documentation: https://docs.openclaw.ai

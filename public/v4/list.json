@@ -1,0 +1,11 @@
+{
+  "oneClickApps": [
+    {
+      "name": "openclaw",
+      "displayName": "OpenClaw",
+      "description": "CapRover one-click app for OpenClaw",
+      "isOfficial": false,
+      "documentation": "https://docs.openclaw.ai"
+    }
+  ]
+}

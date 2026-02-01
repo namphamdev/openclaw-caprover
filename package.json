@@ -1,0 +1,35 @@
+{
+  "name": "openclaw-caprover",
+  "version": "2.0.0",
+  "type": "module",
+  "description": "CapRover one-click app for OpenClaw",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Achxy/openclaw-caprover.git"
+  },
+  "keywords": [
+    "caprover",
+    "openclaw",
+    "one-click-app",
+    "docker",
+    "self-hosted",
+    "ai-assistant"
+  ],
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/Achxy/openclaw-caprover/issues"
+  },
+  "homepage": "https://github.com/Achxy/openclaw-caprover#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "http-proxy": "^1.18.1",
+    "tar": "^7.5.4"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
