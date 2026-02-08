@@ -44,13 +44,17 @@ COPY --from=builder /app/package.json ./
 RUN mkdir -p /home/node/.openclaw /home/node/.openclaw/workspace && \
     chown -R node:node /home/node/.openclaw /wrapper
 
+# Make openclaw CLI available on PATH
+RUN ln -s /app/openclaw.mjs /usr/local/bin/openclaw
+
 # Environment configuration
 ENV PORT=18789 \
     INTERNAL_GATEWAY_PORT=18790 \
     OPENCLAW_STATE_DIR=/home/node/.openclaw \
     OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace \
     NODE_ENV=production \
-    HOME=/home/node
+    HOME=/home/node \
+    PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
 
 # Expose wrapper port
 EXPOSE 18789
