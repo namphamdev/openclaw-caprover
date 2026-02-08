@@ -53,8 +53,7 @@ ENV PORT=18789 \
     OPENCLAW_STATE_DIR=/home/node/.openclaw \
     OPENCLAW_WORKSPACE_DIR=/home/node/.openclaw/workspace \
     NODE_ENV=production \
-    HOME=/home/node \
-    PATH="/usr/local/bin:/usr/bin:/bin:${PATH}"
+    HOME=/home/node
 
 # Expose wrapper port
 EXPOSE 18789
