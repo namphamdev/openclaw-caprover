@@ -16,7 +16,7 @@ RUN npm ci --omit=dev --ignore-scripts
 COPY src/ ./src/
 
 # Stage 2: Runtime image based on OpenClaw
-FROM ghcr.io/openclaw/openclaw:latest
+FROM ghcr.io/openclaw/openclaw:main
 
 # Switch to root for setup
 USER root
